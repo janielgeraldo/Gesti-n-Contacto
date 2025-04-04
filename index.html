@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Contactos Profesionales</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-address-book me-2"></i>
+                Contactos Pro
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="d-flex ms-auto">
+                    <div class="search-box me-2">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="form-control search-input" id="searchInput" placeholder="Buscar contactos...">
+                    </div>
+                    <button class="btn btn-light rounded-pill" type="button" id="importExportBtn">
+                        <i class="fas fa-sync-alt me-1"></i> Importar/Exportar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h2 class="fw-bold mb-0">Mis Contactos</h2>
+                <p class="text-muted">Gestiona tu red profesional</p>
+            </div>
+            <div class="col-md-6 d-flex align-items-center justify-content-md-end">
+                <div class="view-selector me-3">
+                    <button class="btn active" id="viewGrid">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button class="btn" id="viewList">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+                <select class="form-select category-select" id="categoryFilter">
+                    <option value="all">Todas las categorías</option>
+                    <option value="work">Trabajo</option>
+                    <option value="family">Familia</option>
+                    <option value="friend">Amigos</option>
+                    <option value="business">Negocios</option>
+                    <option value="other">Otros</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Filter Pills -->
+        <div class="filter-pills">
+            <div class="filter-pill active" data-filter="all">
+                <i class="fas fa-users"></i>
+                Todos
+            </div>
+            <div class="filter-pill" data-filter="favorites">
+                <i class="fas fa-star"></i>
+                Favoritos
+            </div>
+            <div class="filter-pill" data-filter="recent">
+                <i class="fas fa-clock"></i>
+                Recientes
+            </div>
+        </div>
+
+        <!-- Contacts Grid -->
+        <div id="contactsList" class="row g-4">
+            <!-- Contacts will be inserted here -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fas fa-address-card"></i>
+            </div>
+            <h3>No tienes contactos guardados</h3>
+            <p class="text-muted">¡Comienza añadiendo tu primer contacto!</p>
+            <button class="btn btn-primary rounded-pill mt-3" data-bs-toggle="modal" data-bs-target="#contactModal">
+                <i class="fas fa-plus me-2"></i>
+                Añadir Contacto
+            </button>
+        </div>
+
+        <!-- Loader -->
+        <div id="loader" class="loader"></div>
+    </div>
+
+    <!-- Add/Edit Contact Modal -->
+    <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Nuevo Contacto</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="contactForm">
+                        <input type="hidden" id="contactId">
+
+                        <div class="row mb-4">
+                            <div class="col-lg-4 text-center">
+                                <img id="avatarPreview" src="https://via.placeholder.com/200" alt="Avatar" class="avatar-picker-preview mb-2">
+                                <div class="small text-muted">Clic para elegir avatar</div>
+                                <input type="file" id="avatarInput" class="d-none" accept="image/*">
+                                <input type="hidden" id="avatarUrl">
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="firstName" class="form-label">Nombre*</label>
+                                        <input type="text" class="form-control" id="firstName" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="lastName" class="form-label">Apellido*</label>
+                                        <input type="text" class="form-control" id="lastName" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="email" class="form-label">Email*</label>
+                                        <input type="email" class="form-control" id="email" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="phone" class="form-label">Teléfono</label>
+                                        <input type="tel" class="form-control" id="phone">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="company" class="form-label">Empresa</label>
+                                <input type="text" class="form-control" id="company">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="jobTitle" class="form-label">Cargo</label>
+                                <input type="text" class="form-control" id="jobTitle">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="category" class="form-label">Categoría</label>
+                                <select class="form-select" id="category">
+                                    <option value="work">Trabajo</option>
+                                    <option value="family">Familia</option>
+                                    <option value="friend">Amigos</option>
+                                    <option value="business">Negocios</option>
+                                    <option value="other">Otros</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="birthday" class="form-label">Cumpleaños</label>
+                                <input type="date" class="form-control" id="birthday">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="tags" class="form-label">Etiquetas</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="tagInput" placeholder="Añadir etiqueta y presionar Enter">
+                                <button class="btn btn-outline-secondary" type="button" id="addTagBtn">Añadir</button>
+                            </div>
+                            <div id="tagsContainer" class="chips-container"></div>
+                            <input type="hidden" id="tags">
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-12">
+                                <label for="address" class="form-label">Dirección</label>
+                                <input type="text" class="form-control" id="address">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="city" class="form-label">Ciudad</label>
+                                <input type="text" class="form-control" id="city">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="country" class="form-label">País</label>
+                                <input type="text" class="form-control" id="country">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="notes" class="form-label">Notas</label>
+                            <textarea class="form-control" id="notes" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="favorite">
+                            <label class="form-check-label" for="favorite">
+                                <i class="fas fa-star text-warning me-1"></i> Marcar como favorito
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveContact">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Contact Modal -->
+    <div class="modal fade" id="viewContactModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewModalTitle">Detalles del Contacto</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-4 text-center mb-4 mb-lg-0">
+                            <img id="viewAvatar" src="https://via.placeholder.com/200" alt="Avatar" class="avatar-picker-preview mb-3">
+                            <h4 id="viewFullName" class="mb-1">Nombre Completo</h4>
+                            <p id="viewJobInfo" class="text-muted mb-3">Cargo en Empresa</p>
+                            <div id="viewCategoryBadge" class="mb-3">
+                                <span class="badge rounded-pill bg-primary">Categoría</span>
+                            </div>
+                            <div id="viewTagsContainer" class="d-flex flex-wrap justify-content-center">
+                                <!-- Tags will be inserted here -->
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="mb-4">
+                                <h5 class="mb-3">Información de Contacto</h5>
+                                <div class="row mb-2">
+                                    <div class="col-md-3 text-muted">Email:</div>
+                                    <div class="col-md-9" id="viewEmail">email@example.com</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-3 text-muted">Teléfono:</div>
+                                    <div class="col-md-9" id="viewPhone">+123456789</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-3 text-muted">Dirección:</div>
+                                    <div class="col-md-9" id="viewAddress">Dirección completa</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-3 text-muted">Cumpleaños:</div>
+                                    <div class="col-md-9" id="viewBirthday">01/01/1990</div>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <h5 class="mb-3">Notas</h5>
+                                <div class="card">
+                                    <div class="card-body" id="viewNotes">
+                                        Sin notas
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-muted small" id="viewLastUpdate">
+                                Última actualización: 01/01/2023
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger me-auto" id="deleteContact">
+                        <i class="fas fa-trash-alt me-1"></i> Eliminar
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="editContact">
+                        <i class="fas fa-edit me-1"></i> Editar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import/Export Modal -->
+    <div class="modal fade" id="importExportModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Importar/Exportar Contactos</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-file-export fa-3x mb-3 text-primary"></i>
+                                    <h5>Exportar Contactos</h5>
+                                    <p class="text-muted small">Descarga un archivo JSON con todos tus contactos</p>
+                                    <button class="btn btn-outline-primary rounded-pill" id="exportBtn">
+                                        <i class="fas fa-download me-1"></i> Exportar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-file-import fa-3x mb-3 text-primary"></i>
+                                    <h5>Importar Contactos</h5>
+                                    <p class="text-muted small">Sube un archivo JSON con contactos</p>
+                                    <input type="file" id="importInput" accept=".json" class="d-none">
+                                    <button class="btn btn-outline-primary rounded-pill" id="importBtn">
+                                        <i class="fas fa-upload me-1"></i> Importar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-exclamation-triangle text-danger fa-3x mb-3"></i>
+                        <h4>¿Eliminar este contacto?</h4>
+                        <p>¿Estás seguro de que deseas eliminar a <strong id="deleteContactName"></strong>?</p>
+                        <p class="text-danger"><strong>Esta acción no se puede deshacer.</strong></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Demo Contacts Modal -->
+    <div class="modal fade" id="addDemoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Añadir Contactos de Demostración</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-users fa-3x mb-3 text-primary"></i>
+                        <h4>¿Añadir contactos de demostración?</h4>
+                        <p>Se añadirán 5 contactos de ejemplo para que puedas probar la aplicación.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirmAddDemo">Añadir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container">
+        <div class="toast custom-toast" id="toastNotification" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-primary text-white">
+                <strong class="me-auto" id="toastTitle">Notificación</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+                Mensaje de notificación
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Button -->
+    <button class="btn btn-floating text-white" data-bs-toggle="modal" data-bs-target="#contactModal">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
