@@ -1,0 +1,69 @@
+Documentación del Proyecto: Sistema de Gestión de Contactos
+
+
+1. Introducción
+
+El presente documento describe el desarrollo de un sistema básico de gestión de contactos,
+elaborado como parte de una asignación académica del programa de Desarrollo de Software del Instituto Tecnológico de Las Américas (ITLA).
+ El sistema permite al usuario registrar, visualizar, editar y eliminar información de contactos mediante una interfaz amigable 
+ construida con tecnologías web estándares.
+
+
+
+2. Objetivo del Proyecto
+
+Desarrollar una aplicación web sencilla que permita gestionar una lista de contactos, facilitando la inserción, 
+edición y eliminación de datos, con almacenamiento local en el navegador.
+
+
+3. Tecnologías Utilizadas
+	•	HTML5: para la estructura del contenido.
+	•	CSS3: para los estilos visuales y diseño responsivo.
+	•	JavaScript (Vanilla): para la lógica del sistema, manejo de eventos y manipulación del DOM.
+	•	LocalStorage: para persistencia de datos en el navegador.
+
+
+4. Estructura del Proyecto
+	•	index.html: Contiene la estructura de la interfaz de usuario.
+	•	styles.css: Define los estilos visuales de la aplicación.
+	•	script.js: Incluye toda la lógica funcional como agregar, editar y eliminar contactos.
+
+
+
+5. Funcionalidades Principales
+	•	Agregar contacto: Permite al usuario introducir nombre, teléfono y correo de un nuevo contacto.
+	•	Visualizar lista de contactos: Muestra los contactos guardados en una tabla.
+	•	Editar contacto: El usuario puede modificar los datos de un contacto existente.
+	•	Eliminar contacto: Permite borrar un contacto de la lista.
+	•	Persistencia local: La información se almacena en el navegador usando LocalStorage.
+
+
+
+6. Guía de Uso
+	1.	Abrir el archivo index.html en un navegador web moderno.
+	2.	Completar el formulario con los datos del contacto.
+	3.	Hacer clic en el botón “Agregar” para guardar el contacto.
+	4.	Los contactos se mostrarán en una tabla debajo del formulario.
+	5.	Usar los botones “Editar” o “Eliminar” según sea necesario.
+
+
+7. Consideraciones de Desarrollo
+	•	Se utilizó un enfoque modular en JavaScript para mantener la organización del código.
+	•	Se validan campos básicos para evitar entradas vacías o erróneas.
+	•	El diseño está orientado a dispositivos de escritorio, pero es fácilmente adaptable a móviles.
+
+
+
+8. Conclusión
+
+Este proyecto representa una introducción práctica al desarrollo de aplicaciones web simples utilizando HTML, CSS y JavaScript puro.
+ Permite al estudiante reforzar conceptos clave como la manipulación del DOM, almacenamiento en el navegador y manejo de eventos. Además,
+ fomenta buenas prácticas como la separación de responsabilidades y la escritura de código legible y reutilizable.
+
+
+9. Recomendaciones Futuras
+	•	Implementar almacenamiento en una base de datos externa.
+	•	Incorporar autenticación de usuario.
+	•	Añadir filtros y opciones de búsqueda por nombre o correo.
+	•	Aplicar frameworks modernos como React o Vue para mayor escalabilidad.
+
