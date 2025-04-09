@@ -27,13 +27,13 @@ document.addEventListener('DOMContentLoaded', function() {
     initApp();
     
     function initApp() {
-        // Cargar contactos del localStorage
+        
         loadContacts();
         
-        // Configurar event listeners
+      
         setupEventListeners();
         
-        // Mostrar u ocultar empty state
+      
         toggleEmptyState();
     }
     
