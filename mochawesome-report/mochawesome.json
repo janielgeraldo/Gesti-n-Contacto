@@ -1,0 +1,138 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 1,
+    "passes": 1,
+    "pending": 0,
+    "failures": 0,
+    "start": "2025-04-11T20:27:02.016Z",
+    "end": "2025-04-11T20:27:11.007Z",
+    "duration": 8991,
+    "testsRegistered": 1,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "dd6c95f8-8ca1-47aa-88d6-11eaa0156f0f",
+      "title": "",
+      "fullFile": "C:\\Gesti-n-Contacto\\test\\testFiltroContactos.js",
+      "file": "\\test\\testFiltroContactos.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "c1eed8a6-8989-46fc-ae15-7f335589f898",
+          "title": "Filtro por búsqueda de nombre",
+          "fullFile": "C:\\Gesti-n-Contacto\\test\\testFiltroContactos.js",
+          "file": "\\test\\testFiltroContactos.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Filtro por búsqueda de nombre\"",
+              "fullTitle": "Filtro por búsqueda de nombre \"before all\" hook in \"Filtro por búsqueda de nombre\"",
+              "timedOut": false,
+              "duration": 1816,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "driver = await new Builder().forBrowser('chrome').build();",
+              "err": {},
+              "uuid": "e128b0bb-e090-4de1-8a21-3370e14cdc93",
+              "parentUUID": "c1eed8a6-8989-46fc-ae15-7f335589f898",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Filtro por búsqueda de nombre\"",
+              "fullTitle": "Filtro por búsqueda de nombre \"after all\" hook in \"Filtro por búsqueda de nombre\"",
+              "timedOut": false,
+              "duration": 253,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await driver.quit();",
+              "err": {},
+              "uuid": "fccf1cf9-2e96-4769-918e-9b95a1873c32",
+              "parentUUID": "c1eed8a6-8989-46fc-ae15-7f335589f898",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "Debe buscar un contacto por nombre y mostrar resultados",
+              "fullTitle": "Filtro por búsqueda de nombre Debe buscar un contacto por nombre y mostrar resultados",
+              "timedOut": false,
+              "duration": 6917,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await driver.get('http://127.0.0.1:5500/index.html');\nconst searchInput = await driver.wait(until.elementLocated(By.id('searchInput')), 10000);\nawait searchInput.sendKeys('laura');\nawait driver.sleep(5000); // Dar tiempo para que se actualicen los resultados\nconst resultados = await driver.findElements(By.css('.contact-card'));\nconst cantidad = resultados.length;\nif (cantidad > 0) {\n  const screenshot = await driver.takeScreenshot();\n  const fileName = path.join(__dirname, 'captura_resultados_busqueda.png');\n  fs.writeFileSync(fileName, screenshot, 'base64');\n}\nfor (let r of resultados) {\n  const texto = await r.getText();\n  console.log('---\\n' + texto);\n}\nassert.ok(cantidad > 0, 'No se encontraron contactos con el nombre buscado');",
+              "err": {},
+              "uuid": "c15b7397-b6a5-4234-99a7-33f5ce23064a",
+              "parentUUID": "c1eed8a6-8989-46fc-ae15-7f335589f898",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "c15b7397-b6a5-4234-99a7-33f5ce23064a"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 6917,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 30000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "11.1.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.3"
+    },
+    "marge": {
+      "options": null,
+      "version": "6.2.0"
+    }
+  }
+}

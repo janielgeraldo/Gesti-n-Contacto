@@ -1,34 +1,63 @@
 const { Builder, By, until } = require('selenium-webdriver');
+const assert = require('assert');
 const fs = require('fs');
-const path = require('path');
+const moment = require('moment');
 
-async function testMarcarFavorito() {
-    const driver = await new Builder().forBrowser('chrome').build();
+describe('Prueba del botón de exportación', function() {
+    let driver;
 
-    try {
-        await driver.get('http://127.0.0.1:5500/index.html');
+    before(async function() {
+        driver = await new Builder().forBrowser('chrome').build();
+    });
 
-        
-        await driver.wait(until.elementLocated(By.css('.favorite-btn')), 5000);
-
-        
-        const favButton = await driver.findElement(By.css('.favorite-btn'));
-        await favButton.click(); 
-
-        
-        await driver.sleep(5000);
-
-
-        const screenshot = await driver.takeScreenshot();
-        const filePath = path.join(__dirname, 'captura_favorito.png');
-        fs.writeFileSync(filePath, screenshot, 'base64');
-        console.log(`Captura guardada en: ${filePath}`);
-
-    } catch (error) {
-        console.error('Error durante la prueba:', error);
-    } finally {
+    after(async function() {
         await driver.quit();
-    }
-}
+    });
 
-testMarcarFavorito();
+    it('Debería cargar la página correctamente y hacer clic en el botón de exportación', async function() {
+        const startTime = moment().format('YYYY-MM-DD HH:mm:ss');
+        console.log(`[INICIO] Prueba comenzada a las: ${startTime}`);
+        
+        try {
+            await driver.get('http://127.0.0.1:5500/index.html'); 
+
+            const modal = await driver.wait(until.elementIsVisible(driver.findElement(By.id('importExportModal'))), 10000);
+            console.log('Modal visible.');
+
+            const exportButton = await driver.wait(until.elementIsVisible(driver.findElement(By.id('exportBtn'))), 10000);
+            await driver.wait(until.elementIsEnabled(exportButton), 10000);
+            console.log('Botón de exportación visible y habilitado.');
+
+            try {
+                await exportButton.click();
+                console.log('Botón de exportación clickeado.');
+            } catch (error) {
+                console.log('Error haciendo clic con el método normal, intentando con JavaScript...');
+                await driver.executeScript('arguments[0].click();', exportButton);
+                console.log('Botón de exportación clickeado usando JavaScript.');
+            }
+
+            // Captura de pantalla después de hacer clic
+            console.log('Tomando captura de pantalla...');
+            await driver.takeScreenshot().then(function(image) {
+                fs.writeFileSync('export_button_click.png', image, 'base64');
+                console.log('Captura de pantalla tomada.');
+            });
+
+            // Asegurar que la captura fue tomada correctamente
+            assert(fs.existsSync('export_button_click.png'), 'La captura de pantalla no fue guardada correctamente.');
+
+            const endTime = moment().format('YYYY-MM-DD HH:mm:ss');
+            console.log(`[FIN] Prueba terminada a las: ${endTime}`);
+
+            console.log(`----- REPORTE DE PRUEBA -----`);
+            console.log(`Resultado: Exitosa`);
+            console.log(`Inicio: ${startTime}`);
+            console.log(`Fin: ${endTime}`);
+
+        } catch (error) {
+            console.error(`'Error durante la prueba:', error`);
+            assert.fail(`'La prueba falló: ' + error.message`);
+        }
+    });
+});

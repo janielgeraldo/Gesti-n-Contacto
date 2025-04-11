@@ -1,51 +1,43 @@
 const { Builder, By, until } = require('selenium-webdriver');
-const fs = require('fs'); 
-const path = require('path'); 
+const fs = require('fs');
+const path = require('path');
+const assert = require('assert');
 
-async function testSearchFilter() {
-    let driver = await new Builder().forBrowser('chrome').build();
+describe('Filtro por búsqueda de nombre', function () {
+  this.timeout(30000); // Ampliamos el tiempo de espera por si hay demoras
 
-    try {
-        // Abre la app
-        await driver.get('http://127.0.0.1:5500/index.html');
+  let driver;
 
-        // Espera hasta que el campo de búsqueda esté disponible
-        await driver.wait(until.elementLocated(By.id('searchInput')), 5000);
+  before(async () => {
+    driver = await new Builder().forBrowser('chrome').build();
+  });
 
-        // Escribe un término de búsqueda
-        const searchBox = await driver.findElement(By.id('searchInput'));
-        await searchBox.sendKeys('laura');
+  after(async () => {
+    await driver.quit();
+  });
 
-        // Espera a que se actualicen los resultados
-        await driver.sleep(5000); 
+  it('Debe buscar un contacto por nombre y mostrar resultados', async () => {
+    await driver.get('http://127.0.0.1:5500/index.html');
 
-        // Captura de pantalla de los resultados
-        const screenshot = await driver.takeScreenshot();
-        const fileName = path.join(__dirname, 'captura_resultados_busqueda.png'); 
-        fs.writeFileSync(fileName, screenshot, 'base64');
-        console.log(`Captura de pantalla guardada en: ${fileName}`);
+    const searchInput = await driver.wait(until.elementLocated(By.id('searchInput')), 10000);
+    await searchInput.sendKeys('laura');
 
-        // Captura los resultados filtrados (ajusta selector según tu HTML)
-        const results = await driver.findElements(By.css('.contact-card'));
-        console.log(`Se encontraron ${results.length} resultados`);
+    await driver.sleep(5000); // Dar tiempo para que se actualicen los resultados
 
-        // Opcional: imprimir contenido de cada resultado
-        for (let result of results) {
-            const text = await result.getText();
-            console.log(text);
-        }
+    const resultados = await driver.findElements(By.css('.contact-card'));
+    const cantidad = resultados.length;
 
-    } catch (error) {
-        console.error(error);
-
-        // Captura de pantalla en caso de error
-        const screenshot = await driver.takeScreenshot();
-        const fileName = path.join(__dirname, 'captura_error.png');
-        fs.writeFileSync(fileName, screenshot, 'base64');
-        console.log(`Captura de pantalla (error) guardada en: ${fileName}`);
-    } finally {
-        await driver.quit();
+    if (cantidad > 0) {
+      const screenshot = await driver.takeScreenshot();
+      const fileName = path.join(__dirname, 'captura_resultados_busqueda.png');
+      fs.writeFileSync(fileName, screenshot, 'base64');
     }
-}
 
-testSearchFilter();
+    for (let r of resultados) {
+      const texto = await r.getText();
+      console.log('---\n' + texto);
+    }
+
+    assert.ok(cantidad > 0, 'No se encontraron contactos con el nombre buscado');
+  });
+});
